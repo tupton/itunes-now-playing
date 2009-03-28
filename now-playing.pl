@@ -11,6 +11,9 @@ my $delimiter = " - ";
 # Change this message to specify what is shown if iTunes is paused.
 my $paused_message = "";
 
+# Change this to change how much of the track name is printed.
+my $TRACK_LENGTH_LIMIT = 100;
+
 # Check to see if iTunes is running
 if(is_application_running("iTunes")) {
 	my $iTunesIsPlaying = DoAppleScript( qq{ tell application "iTunes"\nreturn player state is playing\nend tell } ) or die $@;
@@ -54,8 +57,8 @@ if(is_application_running("iTunes")) {
     $trackName =~ s/\s+$//;
     $artistName =~ s/\s+$//;
     # $albumName =~ s/\s+$//;
-    $trackRating =~ s/\s+$//;
-    $trackLength =~ s/\s+$//;
+    # $trackRating =~ s/\s+$//;
+    # $trackLength =~ s/\s+$//;
 
     # Encode the response from DoAppleScript
     # Encode::from_to($trackName, 'MacRoman', 'utf8');
@@ -63,6 +66,11 @@ if(is_application_running("iTunes")) {
     # Encode::from_to($albumName, 'MacRoman', 'utf8');
 
     # my $starRating = text_rating($trackRating);
+
+    # Truncate the name of the track
+    if (length($trackName) > $TRACK_LENGTH_LIMIT) {
+        $trackName = substr($trackName, 0, $TRACK_LENGTH_LIMIT) . "...";
+    }
 
     # Print the current track's information
     print "$artistName$delimiter$trackName\n";
