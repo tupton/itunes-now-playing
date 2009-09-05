@@ -1,7 +1,5 @@
-#! /usr/bin/perl
+#! /usr/bin/env perl
 
-use Mac::Processes;
-use MacPerl 'DoAppleScript';
 use Term::ANSIColor;
 require Encode;
 
@@ -16,7 +14,8 @@ my $TRACK_LENGTH_LIMIT = 100;
 
 # Check to see if iTunes is running
 if(is_application_running("iTunes")) {
-	my $iTunesIsPlaying = DoAppleScript( qq{ tell application "iTunes"\nreturn player state is playing\nend tell } ) or die $@;
+    my $applescript = qq{ 'tell application "iTunes" to get player state is playing' };
+    my $iTunesIsPlaying = qx( osascript -e $applescript );
 
 	# Show that iTunes is paused
 	if($iTunesIsPlaying eq "false") {
@@ -99,21 +98,15 @@ sub text_rating {
 }
 
 sub is_application_running {
-	# Parameter $appName - The name of the application that is tested to be running
-	my $appName = shift;
-	
-	# Determine if the specified application is running
-	my $isRunning = 0;
-	
-	# Get the process list and search for the specified name
-	PROCESS_LIST:
-	while ( my ($psn, $psi) = each(%Process) ) {
-		if ($psi->processName eq $appName) {
-			$running = 1;
-			last PROCESS_LIST;
-		}
-	}
-	
-	# Return the running status of the specified application name
-	return $running;
+    my $creator = shift;
+    $creator =~ s{\\}{\\\\}g;
+    $creator =~ s{"}{\\"}g;
+    $creator =~ s{'}{'\\''}g;
+
+    my $applescript = qq{ 'tell application "System Events" to count } . 
+            qq{ (every process whose name is "$creator")' };
+    my $result = qx( osascript -e $applescript );
+    chomp $result;
+
+    return $result;
 }
