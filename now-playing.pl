@@ -13,12 +13,13 @@ my $paused_message = "";
 my $TRACK_LENGTH_LIMIT = 100;
 
 # Check to see if iTunes is running
-if(is_application_running("iTunes")) {
+if (is_application_running("iTunes")) {
     my $applescript = qq{ 'tell application "iTunes" to get player state is playing' };
     my $iTunesIsPlaying = qx( osascript -e $applescript );
+    chomp $iTunesIsPlaying;
 
 	# Show that iTunes is paused
-	if($iTunesIsPlaying eq "false") {
+	if ($iTunesIsPlaying eq "false") {
         print $paused_message;
         die;
 	}
