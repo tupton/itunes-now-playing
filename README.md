@@ -9,7 +9,7 @@ Written by [Thomas Upton][tu]
 
 This code uses a function conceived by John Gruber that is used to tell if the
 iTunes application is currently running. More information can be found on [Daring
-Fireball][df]
+Fireball][df].
 
 [df]: http://daringfireball.net/2006/10/how_to_tell_if_an_app_is_running
 
